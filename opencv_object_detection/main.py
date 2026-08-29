@@ -1,0 +1,21 @@
+import cv2
+img=cv2.imread("test.webp")
+img2=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+edge=cv2.Canny(img2,80,220)
+edge=cv2.GaussianBlur(edge,(3,3),0)
+cv2.imshow("image3",edge)
+ret,threshold=cv2.threshold(edge,100,255,cv2.THRESH_BINARY)
+cv2.imshow("image4",threshold)
+contours,hierarchy=cv2.findContours(threshold,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+print(f"检测到的目标数量{len(contours)}")
+img5=img.copy()
+for i,c in enumerate(contours):
+    area=cv2.contourArea(c)
+    print(f"第{i+1}个目标的面积为{area}")
+    if area>0:
+        cv2.drawContours(img5,[c],-1,(0,0,255),2)
+cv2.imshow("image5",img5)
+cv2.imwrite("edge.jpg",edge)
+cv2.imwrite("threshold.jpg",threshold)
+cv2.imwrite("result.jpg",img5)
+cv2.waitKey(10000)
